@@ -38,7 +38,7 @@
             AttendingDoctor
         </dt>
         <dd>
-            <text>@Model.GetDoctorName()</text>
+            <text>@Hospital.ViewModels.PatientViewModel.Doctors.ToList().Find(d => d.Id == Model.AttendingDoctorId).Name</text>
         </dd>
     </dl>
 </div>

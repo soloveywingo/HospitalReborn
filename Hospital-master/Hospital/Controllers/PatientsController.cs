@@ -3,6 +3,8 @@ using Hospital.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -53,6 +55,14 @@ namespace Hospital.Controllers
             {
                 Patient patient = PatientViewModel.ToPatient(patientViewModel);
                 patient.Doctors.AddRange(db.Doctors.ToList().Where(doctor => patientViewModel.DoctorsIds.Contains(doctor.Id)));
+
+                string fileName = Path.GetFileNameWithoutExtension(patientViewModel.UserImage.FileName);
+                string extension = Path.GetExtension(patientViewModel.UserImage.FileName);
+                fileName += DateTime.Now.ToString("yymmssff") + extension;
+                patient.ImageUrl = fileName;
+                patientViewModel.UserImage.SaveAs(Path.Combine(Server.MapPath("~/AppFile/Images"), fileName));
+
+
                 db.Patients.Add(patient);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -81,7 +91,7 @@ namespace Hospital.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,TaxCode,DayOfBirth,Status,DoctorId")] Patient patient)
+        public ActionResult Edit([Bind(Include = "Id,Name,TaxCode,DayOfBirth,Status,Doctors")] Patient patient)
         {
             if (ModelState.IsValid)
             {

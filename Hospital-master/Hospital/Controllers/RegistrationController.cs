@@ -1,6 +1,7 @@
 ﻿using Hospital.Models;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -22,7 +23,7 @@ namespace Hospital.Controllers
             if (ModelState.IsValid)
             {
                 db.RegisterUsers.Add(registerUser);
-                Patient newPatient = new Patient() { AttendingDoctorId = 1, Name = registerUser.Name, DayOfBirth = registerUser.BirthDay, Status = Enums.Status.Sick, TaxCode = "123" };
+                Patient newPatient = new Patient() { AttendingDoctorId = 1, Name = registerUser.Name, DayOfBirth = registerUser.BirthDay, Status = Enums.Status.Sick, TaxCode = "not confirmed" };
                 db.Patients.Add(newPatient);
                 db.SaveChanges();
                 Response.Redirect("http://localhost:64270/Patients/Details/" + newPatient.Id);

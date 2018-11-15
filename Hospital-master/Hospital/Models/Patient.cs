@@ -22,5 +22,7 @@ namespace Hospital.Models
 
         public List<Doctor> Doctors { get; set; } = new List<Doctor>();
 
+        public string ImageUrl { get; set; }
+
     }
 }

@@ -4,11 +4,13 @@
 }
 <h2>Create</h2>
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Create", "Patients", FormMethod.Post, new
+            { enctype = "multipart/form-data"
+            }))
 {
-    @Html.AntiForgeryToken()
+                @Html.AntiForgeryToken()
 
-<div class="form-horizontal">
+            <div class="form-horizontal" >
     <h4>Patient</h4>
     <hr />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -54,6 +56,12 @@
         <div class="col-md-10">
             @Html.ListBoxFor(model => model.DoctorsIds, new MultiSelectList(Hospital.ViewModels.PatientViewModel.Doctors, "Id", "Name"));
             @Html.ValidationMessageFor(model => model.DoctorsIds, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.UserImage, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(model => model.UserImage, htmlAttributes: new { @class = "control-label col-md-2" , @type="file"})   
         </div>
     </div>
     <div class="form-group">

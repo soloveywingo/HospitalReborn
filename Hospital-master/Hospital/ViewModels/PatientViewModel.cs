@@ -2,7 +2,10 @@
 using Hospital.Models;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 
 namespace Hospital.ViewModels
@@ -27,9 +30,12 @@ namespace Hospital.ViewModels
 
         public static IEnumerable<Doctor> Doctors = db.Doctors;
         
+        
+        public HttpPostedFileBase UserImage { get; set; }
 
         public static Patient ToPatient(PatientViewModel patientViewModel)
         {
+            
             Patient patient = new Patient
             {
                 Name = patientViewModel.Name,

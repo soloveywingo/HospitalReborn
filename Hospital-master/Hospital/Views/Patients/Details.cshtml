@@ -40,6 +40,21 @@
         <dd>
             <text>@Hospital.ViewModels.PatientViewModel.Doctors.ToList().Find(d => d.Id == Model.AttendingDoctorId).Name</text>
         </dd>
+        <dt>
+            Other doctors:
+        </dt>
+        <dd>
+            @foreach (var doctor in Model.Doctors)
+            {
+                <text>doctor</text>
+            }
+        </dd>
+        <dt>
+            Photo
+        </dt>
+        <dd>
+            <img src="~/AppFile/Images/@Model.ImageUrl" height="200" , width="300" />
+        </dd>
     </dl>
 </div>
 <p>

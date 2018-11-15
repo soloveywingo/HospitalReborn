@@ -57,11 +57,11 @@ namespace Hospital.Controllers
                 Patient patient = PatientViewModel.ToPatient(patientViewModel);
                 patient.Doctors.AddRange(db.Doctors.ToList().Where(doctor => patientViewModel.DoctorsIds.Contains(doctor.Id)));
 
-                string fileName = Path.GetFileNameWithoutExtension(patientViewModel.UserImage.FileName);
-                string extension = Path.GetExtension(patientViewModel.UserImage.FileName);
-                fileName += DateTime.Now.ToString("yymmssff") + extension;
-                patient.ImageUrl = fileName;
-                patientViewModel.UserImage.SaveAs(Path.Combine(Server.MapPath("~/AppFile/PatientPictures"), fileName));
+
+                patient.ImageUrl = GetImageStringPath(patientViewModel);
+                patientViewModel.UserImage.SaveAs(Path.Combine(Server.MapPath("~/AppFile/PatientPictures"), 
+                    patient.ImageUrl));
+                
 
                 db.Patients.Add(patient);
                 db.SaveChanges();
@@ -139,16 +139,13 @@ namespace Hospital.Controllers
             base.Dispose(disposing);
         }
 
-        private void SaveImagePath(PatientViewModel patientViewModel)
+        private string GetImageStringPath(PatientViewModel patientViewModel)
         {
-            string fileName = Path.GetFileNameWithoutExtension(patientViewModel.UserImage.FileName);
-            string extension = Path.GetExtension(patientViewModel.UserImage.FileName);
-
-            StringBuilder stringBuilder = new StringBuilder(fileName);
-            stringBuilder.Append(DateTime.Now.ToString("yymmssff"));
-            stringBuilder.Append(extension);
-
-            patientViewModel.UserImage.SaveAs(Path.Combine(Server.MapPath("~/AppFile/PatientPictures"), fileName));
+            StringBuilder stringBuilder = new StringBuilder
+                (Path.GetFileNameWithoutExtension(patientViewModel.UserImage.FileName));
+            stringBuilder.Append(DateTime.Now.ToString("yymmssff") +
+                Path.GetExtension(patientViewModel.UserImage.FileName));
+            return stringBuilder.ToString();
         }
     }
 }

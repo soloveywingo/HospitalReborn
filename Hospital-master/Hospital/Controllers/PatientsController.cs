@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 
@@ -56,12 +57,7 @@ namespace Hospital.Controllers
                 Patient patient = PatientViewModel.ToPatient(patientViewModel);
                 patient.Doctors.AddRange(db.Doctors.ToList().Where(doctor => patientViewModel.DoctorsIds.Contains(doctor.Id)));
 
-                string fileName = Path.GetFileNameWithoutExtension(patientViewModel.UserImage.FileName);
-                string extension = Path.GetExtension(patientViewModel.UserImage.FileName);
-                fileName += DateTime.Now.ToString("yymmssff") + extension;
-                patient.ImageUrl = fileName;
-                patientViewModel.UserImage.SaveAs(Path.Combine(Server.MapPath("~/AppFile/Images"), fileName));
-
+                SaveImagePath(patientViewModel);
 
                 db.Patients.Add(patient);
                 db.SaveChanges();
@@ -70,6 +66,8 @@ namespace Hospital.Controllers
 
             return View(patientViewModel);
         }
+
+        
 
         // GET: Patients/Edit/5
         public ActionResult Edit(int? id)
@@ -135,6 +133,18 @@ namespace Hospital.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        private void SaveImagePath(PatientViewModel patientViewModel)
+        {
+            string fileName = Path.GetFileNameWithoutExtension(patientViewModel.UserImage.FileName);
+            string extension = Path.GetExtension(patientViewModel.UserImage.FileName);
+
+            StringBuilder stringBuilder = new StringBuilder(fileName);
+            stringBuilder.Append(DateTime.Now.ToString("yymmssff"));
+            stringBuilder.Append(extension);
+
+            patientViewModel.UserImage.SaveAs(Path.Combine(Server.MapPath("~/AppFile/PatientPictures"), fileName));
         }
     }
 }

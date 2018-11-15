@@ -68,7 +68,7 @@
                 <text>@Hospital.ViewModels.PatientViewModel.Doctors.ToList().Find(d=> d.Id ==item.AttendingDoctorId).Name </text>
             </td>
             <td>
-                <img src="~/AppFile/Images/@item.ImageUrl", height="30", width="40" />
+                <img src="~/AppFile/PatientPictures/@item.ImageUrl" height="30" width="40" />
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |

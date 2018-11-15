@@ -11,8 +11,7 @@ namespace Hospital.Models
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Please enter ur name!")]
-        [MaxLength(30, ErrorMessage = "Isn`t it to much 4 ya?")]
+        
         public string Name { get; set; }
         
         public Status Status  { get; set; }

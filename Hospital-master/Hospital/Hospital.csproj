@@ -154,6 +154,18 @@
     <Compile Include="Migrations\201811151304387_patient1.Designer.cs">
       <DependentUpon>201811151304387_patient1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201811151356022_patients.cs" />
+    <Compile Include="Migrations\201811151356022_patients.Designer.cs">
+      <DependentUpon>201811151356022_patients.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811151356219_patient2.cs" />
+    <Compile Include="Migrations\201811151356219_patient2.Designer.cs">
+      <DependentUpon>201811151356219_patient2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811151359409_patient3.cs" />
+    <Compile Include="Migrations\201811151359409_patient3.Designer.cs">
+      <DependentUpon>201811151359409_patient3.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Doctor.cs" />
     <Compile Include="Models\HospitalContext.cs" />
@@ -224,6 +236,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201811151304387_patient1.resx">
       <DependentUpon>201811151304387_patient1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811151356022_patients.resx">
+      <DependentUpon>201811151356022_patients.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811151356219_patient2.resx">
+      <DependentUpon>201811151356219_patient2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811151359409_patient3.resx">
+      <DependentUpon>201811151359409_patient3.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

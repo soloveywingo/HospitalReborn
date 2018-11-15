@@ -57,7 +57,11 @@ namespace Hospital.Controllers
                 Patient patient = PatientViewModel.ToPatient(patientViewModel);
                 patient.Doctors.AddRange(db.Doctors.ToList().Where(doctor => patientViewModel.DoctorsIds.Contains(doctor.Id)));
 
-                SaveImagePath(patientViewModel);
+                string fileName = Path.GetFileNameWithoutExtension(patientViewModel.UserImage.FileName);
+                string extension = Path.GetExtension(patientViewModel.UserImage.FileName);
+                fileName += DateTime.Now.ToString("yymmssff") + extension;
+                patient.ImageUrl = fileName;
+                patientViewModel.UserImage.SaveAs(Path.Combine(Server.MapPath("~/AppFile/PatientPictures"), fileName));
 
                 db.Patients.Add(patient);
                 db.SaveChanges();

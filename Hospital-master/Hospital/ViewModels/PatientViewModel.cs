@@ -2,6 +2,7 @@
 using Hospital.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace Hospital.ViewModels
 
         public int Id { get; set; }
 
+        [Required(ErrorMessage = "Please enter ur name!")]
+        [MaxLength(50, ErrorMessage = "Isn`t it to much 4 ya?")]
         public string Name { get; set; }
 
         public Status Status { get; set; }
@@ -25,7 +28,8 @@ namespace Hospital.ViewModels
         public string TaxCode { get; set; }
 
         public int AttendingDoctorId { get; set; }
-        
+
+        [Required(ErrorMessage = "Choose at least one")]
         public List<int> DoctorsIds { get; set; }
 
         public static IEnumerable<Doctor> Doctors = db.Doctors;

@@ -216,6 +216,13 @@
     <Compile Include="ViewModels\PatientViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AppFile\FooterImages\envelope.svg" />
+    <Content Include="AppFile\FooterImages\facebook-logo.svg" />
+    <Content Include="AppFile\FooterImages\footerback.png" />
+    <Content Include="AppFile\FooterImages\google-plus-social-logotype.svg" />
+    <Content Include="AppFile\FooterImages\phone-call.svg" />
+    <Content Include="AppFile\FooterImages\placeholder.svg" />
+    <Content Include="AppFile\FooterImages\vk-social-logotype.svg" />
     <Content Include="AppFile\PatientPictures\defaultPatient.png" />
     <Content Include="AppFile\PatientPictures\0f6xKZJQpiY18195556.jpg" />
     <Content Include="AppFile\PatientPictures\1394804902-5931890018314758.jpg" />

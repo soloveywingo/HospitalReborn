@@ -66,8 +66,8 @@ namespace Hospital
                 }
                 Doctor doctor = new Doctor
                 {
-                    Name = "Doctor Sasha",
-                    Specialization = "Head of the hosptital",
+                    Name = "Bob",
+                    Specialization = "AloneDoctor",
                     Email = user.Email
                 };
                 context.Doctors.Add(doctor);

@@ -1,5 +1,6 @@
 ﻿using Hospital.Models;
 using Hospital.ViewModels;
+using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -8,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -16,8 +18,14 @@ namespace Hospital.Controllers
     public class PatientsController : Controller
     {
         private HospitalContext db = new HospitalContext();
-        //GET: Patients
-
+        private ApplicationUserManager UserManager
+        {
+            get
+            {
+                return HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+        }
+       
         public ActionResult Index(string searching)
         {
             return View(db.Patients.Where(patient => patient.Name.Contains(searching)
@@ -50,12 +58,17 @@ namespace Hospital.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(PatientViewModel patientViewModel)
+        public async Task<ActionResult> Create(PatientViewModel patientViewModel)
         {
             if (ModelState.IsValid)
             {
                 Patient patient = PatientViewModel.ToPatient(patientViewModel);
-                patient.Doctors.AddRange(db.Doctors.ToList().Where(doctor => patientViewModel.DoctorsIds.Contains(doctor.Id)));
+                patient.Doctors.AddRange(db.Doctors.ToList().Where
+                    (doctor => patientViewModel.DoctorsIds.Contains(doctor.Id)));
+
+
+                var user = new ApplicationUser { UserName = patientViewModel.Email, Email = patientViewModel.Email };
+                var result = await UserManager.CreateAsync(user, patientViewModel.Password);
 
 
                 patient.ImageUrl = GetImageStringPath(patientViewModel);

@@ -4,15 +4,27 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Hospital.Models;
+using Hospital.ViewModels;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace Hospital.Controllers
 {
     public class DoctorsController : Controller
     {
         private HospitalContext db = new HospitalContext();
+        private ApplicationUserManager UserManager
+        {
+            get
+            {
+                return HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+        }
+        
 
 
         // GET: Doctors
@@ -48,16 +60,19 @@ namespace Hospital.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Specialization")] Doctor doctor)
+        public async Task<ActionResult> Create([Bind(Include = "Id,Name,Specialization,Email,Password")] DoctorViewModel doctorViewModel)
         {
             if (ModelState.IsValid)
             {
+                var user = new ApplicationUser { UserName = doctorViewModel.Email, Email = doctorViewModel.Email };
+                var result = await UserManager.CreateAsync(user, doctorViewModel.Password);
+                Doctor doctor = DoctorViewModel.ToDoctor(doctorViewModel);
                 db.Doctors.Add(doctor);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(doctor);
+            return View(doctorViewModel);
         }
 
         // GET: Doctors/Edit/5

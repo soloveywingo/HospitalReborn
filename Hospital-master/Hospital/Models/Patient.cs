@@ -13,7 +13,10 @@ namespace Hospital.Models
 
         
         public string Name { get; set; }
+
+        public string Email { get; set; }
         
+
         public Status Status  { get; set; }
 
         public DateTime DayOfBirth { get; set; }

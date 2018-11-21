@@ -203,14 +203,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201811210143326_doctor.cs" />
-    <Compile Include="Migrations\201811210143326_doctor.Designer.cs">
-      <DependentUpon>201811210143326_doctor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ViewModels\AccountViewModels.cs" />
     <Compile Include="Models\Doctor.cs" />
-    <Compile Include="Models\HospitalContext.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="ViewModels\ManageViewModels.cs" />
     <Compile Include="Models\Patient.cs" />
@@ -220,6 +214,7 @@
     <Compile Include="ViewModels\PatientViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AppFile\PatientPictures\defaultPatient.png" />
     <Content Include="AppFile\PatientPictures\0f6xKZJQpiY18195556.jpg" />
     <Content Include="AppFile\PatientPictures\1394804902-5931890018314758.jpg" />
     <Content Include="AppFile\PatientPictures\1i3hR31bthA18151526.jpg" />
@@ -312,11 +307,6 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201811210143326_doctor.resx">
-      <DependentUpon>201811210143326_doctor.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

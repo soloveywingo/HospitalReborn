@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -14,9 +15,11 @@ using Microsoft.AspNet.Identity.Owin;
 
 namespace Hospital.Controllers
 {
+
+    [Authorize(Roles = "Admin,Doctor")]
     public class DoctorsController : Controller
     {
-        private HospitalContext db = new HospitalContext();
+        private ApplicationDbContext db = new ApplicationDbContext();
         private ApplicationUserManager UserManager
         {
             get
@@ -25,16 +28,12 @@ namespace Hospital.Controllers
             }
         }
         
-
-
-        // GET: Doctors
         public ActionResult Index(string searching)
         {
             return View(db.Doctors.Where(doctor => doctor.Name.Contains(searching)
             || searching == null).ToList());
         }
-
-        // GET: Doctors/Details/5
+        
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -48,34 +47,35 @@ namespace Hospital.Controllers
             }
             return View(doctor);
         }
-
-        // GET: Doctors/Create
+        
         public ActionResult Create()
         {
             return View();
         }
-
-        // POST: Doctors/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create([Bind(Include = "Id,Name,Specialization,Email,Password")] DoctorViewModel doctorViewModel)
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = doctorViewModel.Email, Email = doctorViewModel.Email };
-                var result = await UserManager.CreateAsync(user, doctorViewModel.Password);
-                Doctor doctor = DoctorViewModel.ToDoctor(doctorViewModel);
-                db.Doctors.Add(doctor);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+
+                var user = UserManager.FindByEmail(doctorViewModel.Email);
+                if (user == null)
+                {
+                    user = new ApplicationUser { UserName = doctorViewModel.Email, Email = doctorViewModel.Email };
+                    var result = await UserManager.CreateAsync(user, doctorViewModel.Password);
+                    Doctor doctor = DoctorViewModel.ToDoctor(doctorViewModel);
+                    await UserManager.AddToRoleAsync(user.Id, "Doctor");
+                    db.Doctors.Add(doctor);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
             }
 
             return View(doctorViewModel);
         }
-
-        // GET: Doctors/Edit/5
+        
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -89,10 +89,7 @@ namespace Hospital.Controllers
             }
             return View(doctor);
         }
-
-        // POST: Doctors/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Name,Specialization")] Doctor doctor)
@@ -105,8 +102,7 @@ namespace Hospital.Controllers
             }
             return View(doctor);
         }
-
-        // GET: Doctors/Delete/5
+        
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -120,8 +116,7 @@ namespace Hospital.Controllers
             }
             return View(doctor);
         }
-
-        // POST: Doctors/Delete/5
+        
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)

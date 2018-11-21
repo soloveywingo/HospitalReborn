@@ -1,5 +1,6 @@
 ﻿using Hospital.Models;
 using Hospital.ViewModels;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
@@ -15,9 +16,10 @@ using System.Web.Mvc;
 
 namespace Hospital.Controllers
 {
+   
     public class PatientsController : Controller
     {
-        private HospitalContext db = new HospitalContext();
+        private ApplicationDbContext db = new ApplicationDbContext();
         private ApplicationUserManager UserManager
         {
             get
@@ -25,34 +27,44 @@ namespace Hospital.Controllers
                 return HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
             }
         }
-       
+
+        [Authorize(Roles = "Admin,Doctor")]
         public ActionResult Index(string searching)
         {
             return View(db.Patients.Where(patient => patient.Name.Contains(searching)
             || searching == null).ToList());
         }
 
+        [Authorize(Roles = "Admin,Doctor,Patient")]
         public ActionResult Details(int? id)
         {
-            
-            if (id == null)
+            var currentUser = UserManager.FindById(User.Identity.GetUserId());
+            if (User.IsInRole("Patient"))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                Patient currentPatient = db.Patients.First(p => p.Email == currentUser.Email);
+                if (currentPatient.Id == id)
+                {
+                    Patient patient = db.Patients.Find(id);
+                    return ValidateNulls(id, patient);
+                }
+                return RedirectToAction("Details", "Patients", new { id = currentPatient.Id });
             }
-            Patient patient = db.Patients.Find(id);
-            if (patient == null)
+            else
             {
-                return HttpNotFound();
+                Patient patient = db.Patients.Find(id);
+                return ValidateNulls(id, patient);
             }
-            return View(patient);
+
         }
         
+        [Authorize(Roles = "Admin,Doctor")]
         public ActionResult Create()
         {
             PatientViewModel patientViewModel = new PatientViewModel() { Doctors = db.Doctors.ToList() };
             return View(patientViewModel);
         }
-        
+
+        [Authorize(Roles = "Admin,Doctor")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(PatientViewModel patientViewModel)
@@ -66,6 +78,7 @@ namespace Hospital.Controllers
 
                 var user = new ApplicationUser { UserName = patientViewModel.Email, Email = patientViewModel.Email };
                 var result = await UserManager.CreateAsync(user, patientViewModel.Password);
+                await UserManager.AddToRoleAsync(user.Id, "Patient");
 
 
                 patient.ImageUrl = GetImageStringPath(patientViewModel);
@@ -80,7 +93,8 @@ namespace Hospital.Controllers
 
             return View(patientViewModel);
         }
-        
+
+        [Authorize(Roles = "Admin,Doctor")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -94,7 +108,8 @@ namespace Hospital.Controllers
             }
             return View(patient);
         }
-        
+
+        [Authorize(Roles = "Admin,Doctor")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Name,TaxCode,DayOfBirth,Status,Doctors")] Patient patient)
@@ -107,7 +122,8 @@ namespace Hospital.Controllers
             }
             return View(patient);
         }
-        
+
+        [Authorize(Roles = "Admin,Doctor")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -121,7 +137,8 @@ namespace Hospital.Controllers
             }
             return View(patient);
         }
-        
+
+        [Authorize(Roles = "Admin,Doctor")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
@@ -132,6 +149,7 @@ namespace Hospital.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Admin,Doctor")]
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -140,7 +158,7 @@ namespace Hospital.Controllers
             }
             base.Dispose(disposing);
         }
-
+        
         private string GetImageStringPath(PatientViewModel patientViewModel)
         {
             StringBuilder stringBuilder = new StringBuilder
@@ -148,6 +166,19 @@ namespace Hospital.Controllers
             stringBuilder.Append(DateTime.Now.ToString("yymmssff") +
                 Path.GetExtension(patientViewModel.UserImage.FileName));
             return stringBuilder.ToString();
+        }
+
+        private ActionResult ValidateNulls(int? id, Patient patient)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            if (patient == null)
+            {
+                return HttpNotFound();
+            }
+            return View(patient);
         }
     }
 }

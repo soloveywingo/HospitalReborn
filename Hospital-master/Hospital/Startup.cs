@@ -1,4 +1,7 @@
-﻿using Microsoft.Owin;
+﻿using Hospital.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.Owin;
 using Owin;
 
 [assembly: OwinStartupAttribute(typeof(Hospital.Startup))]
@@ -9,6 +12,58 @@ namespace Hospital
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
+            CreateRolesandUsers();
+        }
+        private void CreateRolesandUsers()
+        {
+            ApplicationDbContext context = new ApplicationDbContext();
+
+            var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
+            var UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
+
+            if (!roleManager.RoleExists("Admin"))
+            {
+                var role = new IdentityRole
+                {
+                    Name = "Admin"
+                };
+                roleManager.Create(role);
+                
+                //creating super admin instantly
+                var user = new ApplicationUser
+                {
+                    UserName = "Admin",
+                    Email = "Admin@gmail.com"
+                };
+                string userPassword = "asdasd";
+                var admin = UserManager.Create(user, userPassword);
+
+                if (admin.Succeeded)
+                {
+                    var result1 = UserManager.AddToRole(user.Id, "Admin");
+
+                }
+            }
+
+            if (!roleManager.RoleExists("Doctor"))
+            {
+                var role = new IdentityRole
+                {
+                    Name = "Doctor"
+                };
+                roleManager.Create(role);
+
+            }
+
+            if (!roleManager.RoleExists("Patient"))
+            {
+                var role = new IdentityRole
+                {
+                    Name = "Patient"
+                };
+                roleManager.Create(role);
+
+            }
         }
     }
 }

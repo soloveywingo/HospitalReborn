@@ -35,15 +35,18 @@
             @Html.DisplayFor(model => model.Status)
         </dd>
         <dt>
-            AttendingDoctor
+            Doctors: 
         </dt>
         <dd>
-            <text>@Hospital.ViewModels.PatientViewModel.Doctors.ToList().Find(d => d.Id == Model.AttendingDoctorId).Name</text>
+            @foreach (var doctor in Model.Doctors)
+            {
+            <li>@doctor.Name</li>
+            }
         </dd>
-        <dt>
+        <dt style="padding-top : 3%">
             Photo
         </dt>
-        <dd>
+        <dd style="padding-top : 3%">
             <img src="~/AppFile/PatientPictures/@Model.ImageUrl" height="200" , width="300" />
         </dd>
     </dl>

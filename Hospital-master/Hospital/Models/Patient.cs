@@ -25,7 +25,7 @@ namespace Hospital.Models
         
         public int AttendingDoctorId { get; set; }
 
-        public List<Doctor> Doctors { get; set; } = new List<Doctor>();
+        public virtual List<Doctor> Doctors { get; set; } = new List<Doctor>();
 
         public string ImageUrl { get; set; }
     }

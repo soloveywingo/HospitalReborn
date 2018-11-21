@@ -13,7 +13,6 @@ namespace Hospital.ViewModels
 {
     public class PatientViewModel
     {
-        private static HospitalContext db = new HospitalContext();
 
         public int Id { get; set; }
 
@@ -43,7 +42,7 @@ namespace Hospital.ViewModels
         [Required(ErrorMessage = "Choose at least one")]
         public List<int> DoctorsIds { get; set; }
 
-        public static IEnumerable<Doctor> Doctors = db.Doctors;
+        public List<Doctor> Doctors;
         
         public HttpPostedFileBase UserImage { get; set; }
         

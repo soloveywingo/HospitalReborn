@@ -34,7 +34,7 @@
             @Html.DisplayNameFor(model => model.Status)
         </th>
         <th>
-            Attending Doctor
+            Doctors
         </th>
         <th>
             Photo
@@ -65,7 +65,12 @@
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
-                <text>@Hospital.ViewModels.PatientViewModel.Doctors.ToList().Find(d=> d.Id ==item.AttendingDoctorId).Name </text>
+                @foreach (var doctor in item.Doctors)
+                {
+                    <dl style="padding-right : 5%">
+                        <dd>@doctor.Name</dd>
+                    </dl>
+                }
             </td>
             <td>
                 <img src="~/AppFile/PatientPictures/@item.ImageUrl" height="30" width="40" />

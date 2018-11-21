@@ -31,7 +31,7 @@ namespace Hospital.Controllers
             return View(db.Patients.Where(patient => patient.Name.Contains(searching)
             || searching == null).ToList());
         }
-        // GET: Patients/Details/5
+
         public ActionResult Details(int? id)
         {
             
@@ -46,16 +46,13 @@ namespace Hospital.Controllers
             }
             return View(patient);
         }
-
-        // GET: Patients/Create
+        
         public ActionResult Create()
         {
-            return View();
+            PatientViewModel patientViewModel = new PatientViewModel() { Doctors = db.Doctors.ToList() };
+            return View(patientViewModel);
         }
-
-        // POST: Patients/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(PatientViewModel patientViewModel)
@@ -83,10 +80,7 @@ namespace Hospital.Controllers
 
             return View(patientViewModel);
         }
-
         
-
-        // GET: Patients/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -100,10 +94,7 @@ namespace Hospital.Controllers
             }
             return View(patient);
         }
-
-        // POST: Patients/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Name,TaxCode,DayOfBirth,Status,Doctors")] Patient patient)
@@ -116,8 +107,7 @@ namespace Hospital.Controllers
             }
             return View(patient);
         }
-
-        // GET: Patients/Delete/5
+        
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -131,8 +121,7 @@ namespace Hospital.Controllers
             }
             return View(patient);
         }
-
-        // POST: Patients/Delete/5
+        
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)

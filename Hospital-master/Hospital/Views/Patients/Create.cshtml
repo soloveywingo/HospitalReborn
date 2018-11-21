@@ -59,14 +59,14 @@
     <div class="form-group">
         @Html.LabelFor(model => model.AttendingDoctorId, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            @Html.DropDownListFor(model => model.AttendingDoctorId, new SelectList(Hospital.ViewModels.PatientViewModel.Doctors, "Id", "Name"));
+            @Html.DropDownListFor(model => model.AttendingDoctorId, new SelectList(Model.Doctors, "Id", "Name"));
             @Html.ValidationMessageFor(model => model.AttendingDoctorId, "", new { @class = "text-danger" })
         </div>
     </div>
     <div class="form-group">
         @Html.LabelFor(model => model.DoctorsIds, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            @Html.ListBoxFor(model => model.DoctorsIds, new MultiSelectList(Hospital.ViewModels.PatientViewModel.Doctors, "Id", "Name"));
+            @Html.ListBoxFor(model => model.DoctorsIds, new MultiSelectList(Model.Doctors, "Id", "Name"));
             @Html.ValidationMessageFor(model => model.DoctorsIds, "", new { @class = "text-danger" })
         </div>
     </div>

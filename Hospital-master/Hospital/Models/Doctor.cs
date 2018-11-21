@@ -22,12 +22,5 @@ namespace Hospital.Models
         public string Specialization { get; set; }
 
         public virtual ICollection<Patient> Patients { get; set; }
-
-       
-        private void CountAllPatients()
-        {
-            HospitalContext db = new HospitalContext();
-        }
-        
     }
 }

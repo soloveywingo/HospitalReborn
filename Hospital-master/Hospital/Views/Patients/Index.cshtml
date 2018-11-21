@@ -8,37 +8,32 @@
 <h2>Patients</h2>
 @using (Html.BeginForm("Index", "Patients", "Index",method: FormMethod.Get))
 {
-    <div class="form-container active-cyan-4 mb-4">
-        <input class="form-control" style="margin-right:1%" type="text" name="searching" placeholder="Search" aria-label="Search">
-        <input type="submit" value="Search" />
+    <div class="form-container active-cyan-4 mb-4" style="display:flex">
+        <input class="form-control"  type="text" name="searching" placeholder="Search" aria-label="Search">
+        <input type="submit" value="Search" class="w3-button w3-pink" style="padding: 6px 16px" />
 
     </div>
 }
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Create New", "Create", "Patients", htmlAttributes: new { @class = "w3-button w3-red", @style = "margin-top:4%" })
 </p>
-<table class="table">
-    <tr>
+<table class="w3-table-all w3-card-4 ">
+    <tr class="w3-red">
         <th>
             @Html.DisplayNameFor(model => model.Name)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.TaxCode)
         </th>
-
         <th>
             @Html.DisplayNameFor(model => model.DayOfBirth)
         </th>
-
         <th>
             @Html.DisplayNameFor(model => model.Status)
         </th>
-        <th>
-            Doctors
-        </th>
-        <th>
-            Photo
-        </th>
+        <th>Doctors</th>
+        <th>Photo</th>
+        <th></th>
     </tr>
     @if (Model.Count() == 0)
     {
@@ -73,7 +68,7 @@
                 }
             </td>
             <td>
-                <img src="~/AppFile/PatientPictures/@item.ImageUrl" height="40" width="43" />
+                <img src="~/AppFile/PatientPictures/@item.ImageUrl" class="w3-bar-item w3-circle w3-hide-small" style="width:70px; height:55px"
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |

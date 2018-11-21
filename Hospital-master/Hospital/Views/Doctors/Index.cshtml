@@ -6,23 +6,23 @@
 <h2>Doctors</h2>
 @using (Html.BeginForm("Index", "Doctors", "Index", method: FormMethod.Get))
 {
-    <div class="form-container active-cyan-4 mb-4">
-        <input class="form-control" style="margin-right:1%" type="text" name="searching" placeholder="Search" aria-label="Search">
-        <input type="submit" value="Search" />
+    <div class="form-container active-cyan-4 mb-4" style="display:flex">
+        <input class="form-control" type="text" name="searching" placeholder="Search" aria-label="Search" ,>
+        <input type="submit" value="Search" class="w3-button w3-light-blue" style="padding: 6px 16px" />
     </div>
 }
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Create New", "Create", "Doctors", htmlAttributes: new { @class = "w3-button w3-blue", @style = "margin-top:4%" })
 </p>
-<table class="table">
-    <tr>
+<table class="w3-table-all w3-card-4">
+    <tr class="w3-blue">
         <th>
             @Html.DisplayNameFor(model => model.Name)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Specialization)
         </th>
-        <th>
+        <th style="padding-left :7%">
             @Html.DisplayNameFor(model => model.Patients)
         </th>
         <th></th>
@@ -46,10 +46,12 @@
             </td>
             <td>
                 @foreach (var patient in item.Patients)
-                {
-                    <dl>
-                        <dd>@patient.Name</dd>
-                    </dl>
+                {<ul class="w3-bar">
+                         <img src="~/AppFile/PatientPictures/@patient.ImageUrl" class="w3-bar-item w3-circle w3-hide-small" style="width:70px; height:55px">
+                         <div class="w3-bar-item">
+                             <span class="w3-large">@patient.Name</span><br>
+                     </div>
+                    </ul>
                 }
             </td>
             <td>

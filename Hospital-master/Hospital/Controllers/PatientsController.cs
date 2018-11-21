@@ -1,15 +1,12 @@
-﻿using Hospital.Models;
+﻿using Hospital.Infrastructure;
+using Hospital.Models;
 using Hospital.ViewModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
-using System;
-using System.Collections.Generic;
 using System.Data.Entity;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -74,18 +71,16 @@ namespace Hospital.Controllers
                 Patient patient = PatientViewModel.ToPatient(patientViewModel);
                 patient.Doctors.AddRange(db.Doctors.ToList().Where
                     (doctor => patientViewModel.DoctorsIds.Contains(doctor.Id)));
-
-
+                
                 var user = new ApplicationUser { UserName = patientViewModel.Email, Email = patientViewModel.Email };
                 var result = await UserManager.CreateAsync(user, patientViewModel.Password);
                 await UserManager.AddToRoleAsync(user.Id, "Patient");
 
-
-                patient.ImageUrl = GetImageStringPath(patientViewModel);
+                ImagePathGetter imagePathGetter = new ImagePathGetter();
+                patient.ImageUrl = imagePathGetter.GetImageStringPath(patientViewModel.UserImage);
                 patientViewModel.UserImage.SaveAs(Path.Combine(Server.MapPath("~/AppFile/PatientPictures"), 
                     patient.ImageUrl));
                 
-
                 db.Patients.Add(patient);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -95,6 +90,7 @@ namespace Hospital.Controllers
         }
 
         [Authorize(Roles = "Admin,Doctor")]
+        [HttpGet]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -102,26 +98,35 @@ namespace Hospital.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Patient patient = db.Patients.Find(id);
-            if (patient == null)
-            {
-                return HttpNotFound();
-            }
-            return View(patient);
+            EditPatientViewModel patientViewModel = EditPatientViewModel.ToViewModel(patient);
+            patientViewModel.Doctors = db.Doctors.ToList();
+            return View(patientViewModel);
         }
 
         [Authorize(Roles = "Admin,Doctor")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,TaxCode,DayOfBirth,Status,Doctors")] Patient patient)
+        public ActionResult Edit(EditPatientViewModel editPatientViewModel)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(patient).State = EntityState.Modified;
+                Patient currentPatient = db.Patients.First(p => p.Id == editPatientViewModel.Id);
+                EditPatient(editPatientViewModel, currentPatient);
+
+                ImagePathGetter imagePathGetter = new ImagePathGetter();
+                if (editPatientViewModel.ChangedImage != null)
+                {
+                    //currentPatient.ImageUrl = imagePathGetter.GetImageStringPath(editPatientViewModel.ChangedImage);
+                }
+
+                db.Entry(currentPatient).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(patient);
+            return View(editPatientViewModel);
         }
+
+        
 
         [Authorize(Roles = "Admin,Doctor")]
         public ActionResult Delete(int? id)
@@ -159,15 +164,6 @@ namespace Hospital.Controllers
             base.Dispose(disposing);
         }
         
-        private string GetImageStringPath(PatientViewModel patientViewModel)
-        {
-            StringBuilder stringBuilder = new StringBuilder
-                (Path.GetFileNameWithoutExtension(patientViewModel.UserImage.FileName));
-            stringBuilder.Append(DateTime.Now.ToString("yymmssff") +
-                Path.GetExtension(patientViewModel.UserImage.FileName));
-            return stringBuilder.ToString();
-        }
-
         private ActionResult ValidateNulls(int? id, Patient patient)
         {
             if (id == null)
@@ -179,6 +175,21 @@ namespace Hospital.Controllers
                 return HttpNotFound();
             }
             return View(patient);
+        }
+        private void EditPatient(EditPatientViewModel editPatientViewModel, Patient currentPatient)
+        {
+            currentPatient.Name = editPatientViewModel.Name;
+            currentPatient.Status = editPatientViewModel.Status;
+            currentPatient.DayOfBirth = editPatientViewModel.DayOfBirth;
+            currentPatient.TaxCode = editPatientViewModel.TaxCode;
+            currentPatient.AttendingDoctorId = editPatientViewModel.AttendingDoctorId;
+
+            if (editPatientViewModel.DoctorsIds != null)
+            {
+                currentPatient.Doctors.Clear();
+                currentPatient.Doctors.AddRange(db.Doctors.ToList().Where
+                    (doctor => editPatientViewModel.DoctorsIds.Contains(doctor.Id)));
+            }
         }
     }
 }

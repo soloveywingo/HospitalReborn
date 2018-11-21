@@ -32,8 +32,8 @@ namespace Hospital
                 //creating super admin instantly
                 var user = new ApplicationUser
                 {
-                    UserName = "Admin",
-                    Email = "Admin@gmail.com"
+                    UserName = "admin@gmail.com",
+                    Email = "admin@gmail.com"
                 };
                 string userPassword = "asdasd";
                 var admin = UserManager.Create(user, userPassword);
@@ -52,6 +52,27 @@ namespace Hospital
                     Name = "Doctor"
                 };
                 roleManager.Create(role);
+
+                var user = new ApplicationUser
+                {
+                    UserName = "doctor@gmail.com",
+                    Email = "doctor@gmail.com"
+                };
+                string docPath = "asdasd";
+                var doc = UserManager.Create(user, docPath);
+                if (doc.Succeeded)
+                {
+                    UserManager.AddToRole(user.Id, "Doctor");
+                }
+                Doctor doctor = new Doctor
+                {
+                    Name = "Doctor Sasha",
+                    Specialization = "Head of the hosptital",
+                    Email = user.Email
+                };
+                context.Doctors.Add(doctor);
+                context.SaveChanges();
+
 
             }
 

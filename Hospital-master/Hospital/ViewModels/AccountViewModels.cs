@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web;
 
 namespace Hospital.Models
 {
@@ -70,6 +72,21 @@ namespace Hospital.Models
         public string Email { get; set; }
 
         [Required]
+        [Display(Name = "Your Name")]
+        [StringLength(100)]
+        public string Name { get; set; }
+
+        [Required]
+        [Display(Name = "Your TaxCode")]
+        [StringLength(12,MinimumLength =12,ErrorMessage ="It has to be 12 numbers")]
+        public string TaxCode { get; set; }
+
+        [Required]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public DateTime DayOfBirth { get; set; }
+
+        [Required]
         [StringLength(100, ErrorMessage = "It`s gotta be more than 6", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
@@ -79,6 +96,8 @@ namespace Hospital.Models
         [Display(Name = "Again Password")]
         [Compare("Password", ErrorMessage = "They don`t match")]
         public string ConfirmPassword { get; set; }
+        
+        public HttpPostedFileBase UserImage { get; set; }
     }
 
     public class ResetPasswordViewModel

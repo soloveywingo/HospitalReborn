@@ -42,10 +42,11 @@ namespace Hospital.ViewModels
         [Required(ErrorMessage = "Choose at least one")]
         public List<int> DoctorsIds { get; set; }
 
-        public List<Doctor> Doctors;
+        public List<Doctor> Doctors { get; set; }
         
         public HttpPostedFileBase UserImage { get; set; }
-        
+
+      
         public static Patient ToPatient(PatientViewModel patientViewModel)
         {
 
@@ -61,5 +62,6 @@ namespace Hospital.ViewModels
             };
             return patient;
         }
+       
     }
 }

@@ -1,12 +1,13 @@
 ﻿@model Hospital.Models.Patient
-
 @{
     ViewBag.Title = "Details";
 }
-
 <h2>Details</h2>
-
 <div>
+    @if (User.IsInRole("Patient"))
+    {
+        <text>Here is your page. If you still don`t have any doctors to visit, they will be able soon.</text>
+    }
     <h4>Patient</h4>
     <hr />
     <dl class="dl-horizontal">
@@ -35,23 +36,26 @@
             @Html.DisplayFor(model => model.Status)
         </dd>
         <dt>
-            Doctors: 
+            Doctors:
         </dt>
         <dd>
             @foreach (var doctor in Model.Doctors)
             {
-            <li>@doctor.Name</li>
+                <li>@doctor.Name</li>
             }
         </dd>
         <dt style="padding-top : 3%">
             Photo
         </dt>
         <dd style="padding-top : 3%">
-            <img src="~/AppFile/PatientPictures/@Model.ImageUrl" height="200" , width="300" />
+            <img src="~/AppFile/PatientPictures/@Model.ImageUrl" height="250" , width="250" />
         </dd>
     </dl>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+@if (User.IsInRole("Admin") || User.IsInRole("Doctor"))
+{
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+}

@@ -10,6 +10,8 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Hospital.Models;
 using Hospital.Enums;
+using Hospital.Infrastructure;
+using System.IO;
 
 namespace Hospital.Controllers
 {
@@ -78,7 +80,7 @@ namespace Hospital.Controllers
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, model.RememberMe });
                 case SignInStatus.Failure:
                 default:
                     ModelState.AddModelError("", "Неудачная попытка входа.");
@@ -132,17 +134,19 @@ namespace Hospital.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.Name, Email = model.Email };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    ImagePathGetter imagePathGetter = new ImagePathGetter();
                     Patient patient = new Patient()
                     {
-                        Name = user.Email,
+                        Name = model.Name,
                         Email = user.Email,
                         Status = Status.Arrived,
-                        ImageUrl = "defaultPatient.png",
-                        DayOfBirth = DateTime.Now.Date
+                        DayOfBirth = model.DayOfBirth,
+                        TaxCode = model.TaxCode,
+                        ImageUrl = "defaultPatient.png"
                     };
                     db.Patients.Add(patient);
                     db.SaveChanges();
@@ -265,7 +269,7 @@ namespace Hospital.Controllers
             {
                 return View("Error");
             }
-            return RedirectToAction("VerifyCode", new { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
+            return RedirectToAction("VerifyCode", new { Provider = model.SelectedProvider, model.ReturnUrl, model.RememberMe });
         }
         
         [AllowAnonymous]

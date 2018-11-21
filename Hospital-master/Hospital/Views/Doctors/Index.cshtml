@@ -4,7 +4,7 @@
 }
 <!DOCTYPE html>
 <h2>Doctors</h2>
-@using (Html.BeginForm("Index", "Doctors", "Index"))
+@using (Html.BeginForm("Index", "Doctors", "Index", method: FormMethod.Get))
 {
     <div class="form-container active-cyan-4 mb-4">
         <input class="form-control" style="margin-right:1%" type="text" name="searching" placeholder="Search" aria-label="Search">

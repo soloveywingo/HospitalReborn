@@ -6,7 +6,7 @@
 <!DOCTYPE html>
 
 <h2>Patients</h2>
-@using (Html.BeginForm("Index", "Patients", "Index"))
+@using (Html.BeginForm("Index", "Patients", "Index",method: FormMethod.Get))
 {
     <div class="form-container active-cyan-4 mb-4">
         <input class="form-control" style="margin-right:1%" type="text" name="searching" placeholder="Search" aria-label="Search">
@@ -68,12 +68,12 @@
                 @foreach (var doctor in item.Doctors)
                 {
                     <dl>
-                        <dd>@doctor.Name</dd>
+                        <dd>@doctor.Specialization @doctor.Name</dd>
                     </dl>
                 }
             </td>
             <td>
-                <img src="~/AppFile/PatientPictures/@item.ImageUrl" height="30" width="40" />
+                <img src="~/AppFile/PatientPictures/@item.ImageUrl" height="40" width="43" />
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |

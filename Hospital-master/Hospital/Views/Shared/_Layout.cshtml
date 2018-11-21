@@ -22,8 +22,16 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
+                    @if (User.IsInRole("Patient"))
+                    {
+                        <li>@Html.ActionLink("My Page", "Details", "Patients")</li>
+
+                    }
+                    else
+                    {
                     <li>@Html.ActionLink("Doctors", "Index", "Doctors")</li>
                     <li>@Html.ActionLink("Patients", "Index", "Patients")</li>
+                    }
                     <li>@Html.ActionLink("Contacts", "Contact", "Home")</li>
                 </ul>
                 @Html.Partial("_LoginPartial")

@@ -203,9 +203,11 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\ImagePathGetter.cs" />
     <Compile Include="ViewModels\AccountViewModels.cs" />
     <Compile Include="Models\Doctor.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="ViewModels\EditPatientViewModel.cs" />
     <Compile Include="ViewModels\ManageViewModels.cs" />
     <Compile Include="Models\Patient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

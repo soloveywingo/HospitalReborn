@@ -26,7 +26,7 @@ namespace Hospital.Controllers
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
@@ -38,9 +38,9 @@ namespace Hospital.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -55,14 +55,14 @@ namespace Hospital.Controllers
                 _userManager = value;
             }
         }
-        
+
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
-        
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -87,7 +87,7 @@ namespace Hospital.Controllers
                     return View(model);
             }
         }
-        
+
         [AllowAnonymous]
         public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)
         {
@@ -97,7 +97,7 @@ namespace Hospital.Controllers
             }
             return View(new VerifyCodeViewModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
-        
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -107,7 +107,7 @@ namespace Hospital.Controllers
             {
                 return View(model);
             }
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -120,13 +120,13 @@ namespace Hospital.Controllers
                     return View(model);
             }
         }
-        
+
         [AllowAnonymous]
         public ActionResult Register()
         {
             return View();
         }
-        
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -138,7 +138,7 @@ namespace Hospital.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    
+
                     Patient patient = new Patient()
                     {
                         Name = model.Name,
@@ -147,24 +147,31 @@ namespace Hospital.Controllers
                         DayOfBirth = model.DayOfBirth,
                         TaxCode = model.TaxCode,
                     };
-                    ImagePathGetter imagePathGetter = new ImagePathGetter();
+                    ImageWorker imagePathGetter = new ImageWorker();
                     patient.ImageUrl = imagePathGetter.GetImageStringPath(model.UserImage);
-                    model.UserImage.SaveAs(Path.Combine(
-                       Server.MapPath("~/AppFile/PatientPictures"), patient.ImageUrl));
-
+                    SaveImage(model, patient);
                     db.Patients.Add(patient);
                     db.SaveChanges();
 
                     await UserManager.AddToRoleAsync(user.Id, "Patient");
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
                     return RedirectToAction("Details", "Patients", new { id = patient.Id });
                 }
                 AddErrors(result);
             }
             return View(model);
         }
-        
+
+        private void SaveImage(RegisterViewModel model, Patient patient)
+        {
+            if (model.UserImage != null)
+            {
+                model.UserImage.SaveAs(Path.Combine(
+                Server.MapPath("~/AppFile/PatientPictures"), patient.ImageUrl));
+            }
+        }
+
         [AllowAnonymous]
         public async Task<ActionResult> ConfirmEmail(string userId, string code)
         {
@@ -175,13 +182,13 @@ namespace Hospital.Controllers
             var result = await UserManager.ConfirmEmailAsync(userId, code);
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
-        
+
         [AllowAnonymous]
         public ActionResult ForgotPassword()
         {
             return View();
         }
-        
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -197,19 +204,19 @@ namespace Hospital.Controllers
             }
             return View(model);
         }
-        
+
         [AllowAnonymous]
         public ActionResult ForgotPasswordConfirmation()
         {
             return View();
         }
-        
+
         [AllowAnonymous]
         public ActionResult ResetPassword(string code)
         {
             return code == null ? View("Error") : View();
         }
-        
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -232,13 +239,13 @@ namespace Hospital.Controllers
             AddErrors(result);
             return View();
         }
-        
+
         [AllowAnonymous]
         public ActionResult ResetPasswordConfirmation()
         {
             return View();
         }
-        
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -246,7 +253,7 @@ namespace Hospital.Controllers
         {
             return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
         }
-        
+
         [AllowAnonymous]
         public async Task<ActionResult> SendCode(string returnUrl, bool rememberMe)
         {
@@ -259,7 +266,7 @@ namespace Hospital.Controllers
             var factorOptions = userFactors.Select(purpose => new SelectListItem { Text = purpose, Value = purpose }).ToList();
             return View(new SendCodeViewModel { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
-        
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -275,7 +282,7 @@ namespace Hospital.Controllers
             }
             return RedirectToAction("VerifyCode", new { Provider = model.SelectedProvider, model.ReturnUrl, model.RememberMe });
         }
-        
+
         [AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
@@ -284,7 +291,7 @@ namespace Hospital.Controllers
             {
                 return RedirectToAction("Login");
             }
-            
+
             var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
             switch (result)
             {
@@ -301,7 +308,7 @@ namespace Hospital.Controllers
                     return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
             }
         }
-        
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -336,7 +343,7 @@ namespace Hospital.Controllers
             ViewBag.ReturnUrl = returnUrl;
             return View(model);
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
@@ -344,7 +351,7 @@ namespace Hospital.Controllers
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index", "Home");
         }
-        
+
         [AllowAnonymous]
         public ActionResult ExternalLoginFailure()
         {

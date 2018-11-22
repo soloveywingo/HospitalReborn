@@ -62,6 +62,6 @@ namespace Hospital.ViewModels
             };
             return patient;
         }
-       
+
     }
 }

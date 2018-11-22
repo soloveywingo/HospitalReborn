@@ -7,7 +7,7 @@ using System.Web;
 
 namespace Hospital.Infrastructure
 {
-    public class ImagePathGetter
+    public class ImageWorker
     {
         public string GetImageStringPath(HttpPostedFileBase postedFile)
         {
@@ -21,5 +21,6 @@ namespace Hospital.Infrastructure
                 Path.GetExtension(postedFile.FileName));
             return stringBuilder.ToString();
         }
+
     }
 }

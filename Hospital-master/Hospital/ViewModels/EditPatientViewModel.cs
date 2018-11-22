@@ -46,5 +46,14 @@ namespace Hospital.ViewModels
             };
             return viewModel;
         }
+        public void EditPatient(EditPatientViewModel editPatientViewModel, Patient currentPatient)
+        {
+            currentPatient.Name = editPatientViewModel.Name;
+            currentPatient.Status = editPatientViewModel.Status;
+            currentPatient.DayOfBirth = editPatientViewModel.DayOfBirth;
+            currentPatient.TaxCode = editPatientViewModel.TaxCode;
+            currentPatient.AttendingDoctorId = editPatientViewModel.AttendingDoctorId;
+
+        }
     }
 }

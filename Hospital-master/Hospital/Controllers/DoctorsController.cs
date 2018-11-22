@@ -70,11 +70,14 @@ namespace Hospital.Controllers
                     Doctor doctor = DoctorViewModel.ToDoctor(doctorViewModel);
                     await UserManager.AddToRoleAsync(user.Id, "Doctor");
 
-                    ImagePathGetter imagePathGetter = new ImagePathGetter();
+                    ImageWorker imagePathGetter = new ImageWorker();
                     doctor.ImageUrl = imagePathGetter.GetImageStringPath(doctorViewModel.DoctorImage);
-                    doctorViewModel.DoctorImage.SaveAs(Path.Combine(
-                        Server.MapPath("~/AppFile/DoctorPictures"), doctor.ImageUrl));
 
+                    if (doctorViewModel.DoctorImage != null)
+                    {
+                        doctorViewModel.DoctorImage.SaveAs(Path.Combine(
+                            Server.MapPath("~/AppFile/DoctorPictures"), doctor.ImageUrl));
+                    }
                     db.Doctors.Add(doctor);
                     db.SaveChanges();
                     return RedirectToAction("Index");

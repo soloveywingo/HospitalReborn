@@ -76,14 +76,11 @@ namespace Hospital.Controllers
                     patient.Doctors.AddRange(db.Doctors.ToList().Where
                         (doctor => patientViewModel.DoctorsIds.Contains(doctor.Id)));
 
-                    var user = new ApplicationUser { UserName = patientViewModel.Email, Email = patientViewModel.Email };
-                    var result = await UserManager.CreateAsync(user, patientViewModel.Password);
-                    await UserManager.AddToRoleAsync(user.Id, "Patient");
+                    await CreateUser(patientViewModel);
 
-                    ImagePathGetter imagePathGetter = new ImagePathGetter();
+                    ImageWorker imagePathGetter = new ImageWorker();
                     patient.ImageUrl = imagePathGetter.GetImageStringPath(patientViewModel.UserImage);
-                    patientViewModel.UserImage.SaveAs(Path.Combine(Server.MapPath("~/AppFile/PatientPictures"),
-                        patient.ImageUrl));
+                    SaveImage(patientViewModel, patient);
 
                     db.Patients.Add(patient);
                     db.SaveChanges();
@@ -94,6 +91,9 @@ namespace Hospital.Controllers
             patientViewModel.AttendingDoctorId = 1;
             return View(patientViewModel);
         }
+
+       
+
 
         [Authorize(Roles = "Admin,Doctor")]
         [HttpGet]
@@ -117,13 +117,10 @@ namespace Hospital.Controllers
             if (ModelState.IsValid)
             {
                 Patient currentPatient = db.Patients.First(p => p.Id == editPatientViewModel.Id);
-                EditPatient(editPatientViewModel, currentPatient);
+                editPatientViewModel.EditPatient(editPatientViewModel, currentPatient);
+                EditPatientsDoctors(editPatientViewModel, currentPatient);
 
-                ImagePathGetter imagePathGetter = new ImagePathGetter();
-                if (editPatientViewModel.ChangedImage != null)
-                {
-                    //currentPatient.ImageUrl = imagePathGetter.GetImageStringPath(editPatientViewModel.ChangedImage);
-                }
+                ChangeImage(editPatientViewModel, currentPatient);
 
                 db.Entry(currentPatient).State = EntityState.Modified;
                 db.SaveChanges();
@@ -133,6 +130,8 @@ namespace Hospital.Controllers
         }
 
         
+
+
 
         [Authorize(Roles = "Admin,Doctor")]
         public ActionResult Delete(int? id)
@@ -182,20 +181,39 @@ namespace Hospital.Controllers
             }
             return View(patient);
         }
-        private void EditPatient(EditPatientViewModel editPatientViewModel, Patient currentPatient)
+       
+        private void ChangeImage(EditPatientViewModel editPatientViewModel, Patient currentPatient)
         {
-            currentPatient.Name = editPatientViewModel.Name;
-            currentPatient.Status = editPatientViewModel.Status;
-            currentPatient.DayOfBirth = editPatientViewModel.DayOfBirth;
-            currentPatient.TaxCode = editPatientViewModel.TaxCode;
-            currentPatient.AttendingDoctorId = editPatientViewModel.AttendingDoctorId;
-
+            if (editPatientViewModel.ChangedImage != null)
+            {
+                ImageWorker imagePathGetter = new ImageWorker();
+                currentPatient.ImageUrl = imagePathGetter.GetImageStringPath(editPatientViewModel.ChangedImage);
+                editPatientViewModel.ChangedImage.SaveAs(Path.Combine(
+                   Server.MapPath("~/AppFile/PatientPictures"), currentPatient.ImageUrl));
+            }
+        }
+        private void SaveImage(PatientViewModel patientViewModel, Patient patient)
+        {
+            if (patientViewModel.UserImage != null)
+            {
+                patientViewModel.UserImage.SaveAs(Path.Combine(Server.MapPath("~/AppFile/PatientPictures"),
+                    patient.ImageUrl));
+            }
+        }
+        private void EditPatientsDoctors(EditPatientViewModel editPatientViewModel, Patient currentPatient)
+        {
             if (editPatientViewModel.DoctorsIds != null)
             {
                 currentPatient.Doctors.Clear();
                 currentPatient.Doctors.AddRange(db.Doctors.ToList().Where
                     (doctor => editPatientViewModel.DoctorsIds.Contains(doctor.Id)));
             }
+        }
+        private async Task CreateUser(PatientViewModel patientViewModel)
+        {
+            var user = new ApplicationUser { UserName = patientViewModel.Email, Email = patientViewModel.Email };
+            var result = await UserManager.CreateAsync(user, patientViewModel.Password);
+            await UserManager.AddToRoleAsync(user.Id, "Patient");
         }
     }
 }

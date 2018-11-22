@@ -68,24 +68,30 @@ namespace Hospital.Controllers
         {
             if (ModelState.IsValid)
             {
-                Patient patient = PatientViewModel.ToPatient(patientViewModel);
-                patient.Doctors.AddRange(db.Doctors.ToList().Where
-                    (doctor => patientViewModel.DoctorsIds.Contains(doctor.Id)));
-                
-                var user = new ApplicationUser { UserName = patientViewModel.Email, Email = patientViewModel.Email };
-                var result = await UserManager.CreateAsync(user, patientViewModel.Password);
-                await UserManager.AddToRoleAsync(user.Id, "Patient");
+                var checkingUser = UserManager.FindByEmail(patientViewModel.Email);
 
-                ImagePathGetter imagePathGetter = new ImagePathGetter();
-                patient.ImageUrl = imagePathGetter.GetImageStringPath(patientViewModel.UserImage);
-                patientViewModel.UserImage.SaveAs(Path.Combine(Server.MapPath("~/AppFile/PatientPictures"), 
-                    patient.ImageUrl));
-                
-                db.Patients.Add(patient);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                if (checkingUser == null)
+                {
+                    Patient patient = PatientViewModel.ToPatient(patientViewModel);
+                    patient.Doctors.AddRange(db.Doctors.ToList().Where
+                        (doctor => patientViewModel.DoctorsIds.Contains(doctor.Id)));
+
+                    var user = new ApplicationUser { UserName = patientViewModel.Email, Email = patientViewModel.Email };
+                    var result = await UserManager.CreateAsync(user, patientViewModel.Password);
+                    await UserManager.AddToRoleAsync(user.Id, "Patient");
+
+                    ImagePathGetter imagePathGetter = new ImagePathGetter();
+                    patient.ImageUrl = imagePathGetter.GetImageStringPath(patientViewModel.UserImage);
+                    patientViewModel.UserImage.SaveAs(Path.Combine(Server.MapPath("~/AppFile/PatientPictures"),
+                        patient.ImageUrl));
+
+                    db.Patients.Add(patient);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
             }
-
+            patientViewModel.Doctors = db.Doctors.ToList();
+            patientViewModel.AttendingDoctorId = 1;
             return View(patientViewModel);
         }
 

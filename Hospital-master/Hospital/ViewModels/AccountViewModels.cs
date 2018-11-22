@@ -78,7 +78,7 @@ namespace Hospital.Models
 
         [Required]
         [Display(Name = "Your TaxCode")]
-        [StringLength(12,MinimumLength =12,ErrorMessage ="It has to be 12 numbers")]
+        [StringLength(12,MinimumLength =12,ErrorMessage ="TaxCode has to be 12 numbers")]
         public string TaxCode { get; set; }
 
         [Required]

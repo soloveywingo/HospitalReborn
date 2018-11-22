@@ -11,6 +11,10 @@ namespace Hospital.Infrastructure
     {
         public string GetImageStringPath(HttpPostedFileBase postedFile)
         {
+            if (postedFile == null)
+            {
+                return "default.png";
+            }
             StringBuilder stringBuilder = new StringBuilder
                 (Path.GetFileNameWithoutExtension(postedFile.FileName));
             stringBuilder.Append(DateTime.Now.ToString("yymmssff") +

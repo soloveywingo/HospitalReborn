@@ -138,7 +138,7 @@ namespace Hospital.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    ImagePathGetter imagePathGetter = new ImagePathGetter();
+                    
                     Patient patient = new Patient()
                     {
                         Name = model.Name,
@@ -146,8 +146,12 @@ namespace Hospital.Controllers
                         Status = Status.Arrived,
                         DayOfBirth = model.DayOfBirth,
                         TaxCode = model.TaxCode,
-                        ImageUrl = "defaultPatient.png"
                     };
+                    ImagePathGetter imagePathGetter = new ImagePathGetter();
+                    patient.ImageUrl = imagePathGetter.GetImageStringPath(model.UserImage);
+                    model.UserImage.SaveAs(Path.Combine(
+                       Server.MapPath("~/AppFile/PatientPictures"), patient.ImageUrl));
+
                     db.Patients.Add(patient);
                     db.SaveChanges();
 

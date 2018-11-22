@@ -68,7 +68,8 @@ namespace Hospital
                 {
                     Name = "Bob",
                     Specialization = "AloneDoctor",
-                    Email = user.Email
+                    Email = user.Email,
+                    ImageUrl = "DoctorBob.jpg"
                 };
                 context.Doctors.Add(doctor);
                 context.SaveChanges();

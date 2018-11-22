@@ -34,7 +34,9 @@ namespace Hospital.ViewModels
         public string Specialization { get; set; }
 
         public virtual ICollection<Patient> Patients { get; set; }
-        
+
+        public HttpPostedFileBase DoctorImage { get; set; }
+
         public static Doctor ToDoctor(DoctorViewModel doctorViewModel)
         {
             

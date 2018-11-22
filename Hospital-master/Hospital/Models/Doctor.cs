@@ -12,13 +12,13 @@ namespace Hospital.Models
 
         public string Name { get; set; }
 
-
+        public string ImageUrl { get; set;}
+        
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
         
-
         public string Specialization { get; set; }
 
         public virtual ICollection<Patient> Patients { get; set; }

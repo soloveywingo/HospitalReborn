@@ -55,8 +55,8 @@ namespace Hospital
             //   consumerSecret: "");
 
             //app.UseFacebookAuthentication(
-            //   appId: "",
-            //   appSecret: "");
+             // appId: "1063334877181953",
+              //appSecret: "cc4966e2c2ef2b6f8b674c61557ba789");
 
             //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
             //{

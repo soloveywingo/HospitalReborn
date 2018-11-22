@@ -204,6 +204,15 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\ImagePathGetter.cs" />
+    <Compile Include="Migrations\201811212309171_InitialCreate.cs" />
+    <Compile Include="Migrations\201811212309171_InitialCreate.Designer.cs">
+      <DependentUpon>201811212309171_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811220244495_doctor.cs" />
+    <Compile Include="Migrations\201811220244495_doctor.Designer.cs">
+      <DependentUpon>201811220244495_doctor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ViewModels\AccountViewModels.cs" />
     <Compile Include="Models\Doctor.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -301,6 +310,7 @@
     <Content Include="Views\Doctors\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="AppFile\DoctorPictures\" />
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
@@ -315,6 +325,14 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201811212309171_InitialCreate.resx">
+      <DependentUpon>201811212309171_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811220244495_doctor.resx">
+      <DependentUpon>201811220244495_doctor.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

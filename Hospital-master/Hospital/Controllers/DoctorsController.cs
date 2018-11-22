@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Hospital.Infrastructure;
 using Hospital.Models;
 using Hospital.ViewModels;
 using Microsoft.AspNet.Identity;
@@ -55,7 +57,7 @@ namespace Hospital.Controllers
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Name,Specialization,Email,Password")] DoctorViewModel doctorViewModel)
+        public async Task<ActionResult> Create(DoctorViewModel doctorViewModel)
         {
             if (ModelState.IsValid)
             {
@@ -67,6 +69,12 @@ namespace Hospital.Controllers
                     var result = await UserManager.CreateAsync(user, doctorViewModel.Password);
                     Doctor doctor = DoctorViewModel.ToDoctor(doctorViewModel);
                     await UserManager.AddToRoleAsync(user.Id, "Doctor");
+
+                    ImagePathGetter imagePathGetter = new ImagePathGetter();
+                    doctor.ImageUrl = imagePathGetter.GetImageStringPath(doctorViewModel.DoctorImage);
+                    doctorViewModel.DoctorImage.SaveAs(Path.Combine(
+                        Server.MapPath("~/AppFile/DoctorPictures"), doctor.ImageUrl));
+
                     db.Doctors.Add(doctor);
                     db.SaveChanges();
                     return RedirectToAction("Index");

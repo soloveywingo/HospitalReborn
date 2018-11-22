@@ -25,6 +25,7 @@
         <th style="padding-left :7%">
             @Html.DisplayNameFor(model => model.Patients)
         </th>
+        <th>Photo</th>
         <th></th>
     </tr>
     @if (Model.Count() == 0)
@@ -53,6 +54,9 @@
                      </div>
                     </ul>
                 }
+            </td>
+            <td>
+                <img src="~/AppFile/DoctorPictures/@item.ImageUrl" class="w3-bar-item w3-circle w3-hide-small" style="width:70px; height:55px" />
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |

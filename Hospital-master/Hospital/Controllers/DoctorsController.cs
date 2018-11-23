@@ -61,14 +61,12 @@ namespace Hospital.Controllers
         {
             if (ModelState.IsValid)
             {
-
                 var user = UserManager.FindByEmail(doctorViewModel.Email);
                 if (user == null)
                 {
-                    user = new ApplicationUser { UserName = doctorViewModel.Email, Email = doctorViewModel.Email };
-                    var result = await UserManager.CreateAsync(user, doctorViewModel.Password);
                     Doctor doctor = DoctorViewModel.ToDoctor(doctorViewModel);
-                    await UserManager.AddToRoleAsync(user.Id, "Doctor");
+
+                    user = await AddUser(doctorViewModel);
 
                     ImageWorker imagePathGetter = new ImageWorker();
                     doctor.ImageUrl = imagePathGetter.GetImageStringPath(doctorViewModel.DoctorImage);
@@ -78,6 +76,7 @@ namespace Hospital.Controllers
                         doctorViewModel.DoctorImage.SaveAs(Path.Combine(
                             Server.MapPath("~/AppFile/DoctorPictures"), doctor.ImageUrl));
                     }
+
                     db.Doctors.Add(doctor);
                     db.SaveChanges();
                     return RedirectToAction("Index");
@@ -86,7 +85,9 @@ namespace Hospital.Controllers
 
             return View(doctorViewModel);
         }
+
         
+
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -145,6 +146,14 @@ namespace Hospital.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        private async Task<ApplicationUser> AddUser(DoctorViewModel doctorViewModel)
+        {
+            ApplicationUser user = new ApplicationUser { UserName = doctorViewModel.Email, Email = doctorViewModel.Email };
+            var result = await UserManager.CreateAsync(user, doctorViewModel.Password);
+            await UserManager.AddToRoleAsync(user.Id, "Doctor");
+            return user;
         }
     }
 }
